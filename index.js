@@ -4,6 +4,8 @@ import { promises } from 'fs';
 
 const { readFile, writeFile } = promises;
 
+global.fileName = 'accounts.json';
+
 const app = express();
 app.use(express.json());
 
@@ -11,17 +13,22 @@ app.use('/account', accountsRouter);
 
 app.listen(3000, async () => {
   try {
-    await readFile('accounts.json');
-
-    console.log('Back-end started!');
+    await readFile(global.fileName);
   } catch (err) {
     const initialJson = {
       nextId: 1,
       accounts: [],
     };
 
-    await writeFile('accounts.json', JSON.stringify(initialJson));
+    try {
+      await writeFile(global.fileName, JSON.stringify(initialJson));
+    } catch (err) {
+      console.log(`File not saved.\nerror: ${err.message}`);
+      return;
+    }
 
-    console.log('File created and back-end started!');
+    console.log('File created.');
   }
+
+  console.log('Back-end started!');
 });
