@@ -1,10 +1,26 @@
 import express from 'express';
-import accountsRouter from './routes/accounts.js';
 import { promises } from 'fs';
+import winston from 'winston';
+
+import accountsRouter from './routes/accounts.js';
 
 const { readFile, writeFile } = promises;
 
 global.fileName = 'accounts.json';
+
+const { combine, timestamp, label, printf } = winston.format;
+const myFormat = printf(
+  ({ level, message, label, timestamp }) =>
+    `${timestamp} [${label}] ${level}: ${message}`
+);
+global.logger = winston.createLogger({
+  level: 'silly',
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'myBank-api.log' }),
+  ],
+  format: combine(label({ label: 'myBank-api' }), timestamp(), myFormat),
+});
 
 const app = express();
 app.use(express.json());
@@ -14,6 +30,7 @@ app.use('/account', accountsRouter);
 app.listen(3000, async () => {
   try {
     await readFile(global.fileName);
+    logger.info(`'accounts.json' file loaded.`);
   } catch (err) {
     const initialJson = {
       nextId: 1,
@@ -23,12 +40,12 @@ app.listen(3000, async () => {
     try {
       await writeFile(global.fileName, JSON.stringify(initialJson));
     } catch (err) {
-      console.log(`File not saved.\nerror: ${err.message}`);
+      logger.error(err);
       return;
     }
 
-    console.log('File created.');
+    logger.info(`'accounts.json' file created.`);
   }
 
-  console.log('Back-end started!');
+  logger.info('API started!');
 });

@@ -4,7 +4,7 @@ import { promises } from 'fs';
 const { readFile, writeFile } = promises;
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     let { name, balance } = req.body;
     name = String(name).trim();
@@ -16,30 +16,31 @@ router.post('/', async (req, res) => {
 
     data.accounts.push(account);
 
-    try {
-      await writeFile(global.fileName, JSON.stringify(data, null, 2));
-    } catch (err) {
-      console.log(`File not saved.\nerror: ${err.message}`);
+    await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
-      return res.status(500).send({ error: err.message });
-    }
+    logger.info(
+      `${req.method} ${req.baseUrl}: created account with id ${account.id}`
+    );
 
     return res.send(account);
   } catch (err) {
-    return res.status(400).send({ error: err.message });
+    next(err);
   }
 });
 
-router.get('/', async (_req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const { accounts } = JSON.parse(await readFile(global.fileName));
+
+    logger.info(`${req.method} ${req.baseUrl} success.`);
+
     return res.send(accounts);
   } catch (err) {
-    return res.status(400).send({ error: err.message });
+    next(err);
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const { accounts } = JSON.parse(await readFile(global.fileName));
@@ -47,16 +48,18 @@ router.get('/:id', async (req, res) => {
     const account = accounts.find((account) => account.id.toString() === id);
 
     if (!account) {
-      return res.status(400).send({ error: 'ID not found.' });
+      throw { message: 'ID not found.' };
     }
+
+    logger.info(`${req.method} ${req.baseUrl}${req.url} success.`);
 
     return res.send(account);
   } catch (err) {
-    return res.status(400).send({ error: err.message });
+    next(err);
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const data = JSON.parse(await readFile(global.fileName));
@@ -66,20 +69,22 @@ router.delete('/:id', async (req, res) => {
     );
 
     if (accountIndex < 0) {
-      return res.status(400).send({ error: 'ID not found.' });
+      throw { message: 'ID not found.' };
     }
 
     data.accounts.splice(accountIndex, 1);
 
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
+    logger.info(`${req.method} ${req.baseUrl}${req.url} success.`);
+
     return res.status(204).end();
   } catch (err) {
-    return res.status(400).send({ error: err.message });
+    next(err);
   }
 });
 
-router.put('/', async (req, res) => {
+router.put('/', async (req, res, next) => {
   try {
     const { id, name, balance } = req.body;
 
@@ -90,20 +95,22 @@ router.put('/', async (req, res) => {
     );
 
     if (accountIndex < 0) {
-      return res.status(400).send({ error: 'ID not found.' });
+      throw { message: 'ID not found.' };
     }
 
     data.accounts[accountIndex] = { id, name, balance };
 
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
+    logger.info(`${req.method} ${req.baseUrl}${req.url} ID ${id} updated.`);
+
     return res.send(data.accounts[accountIndex]);
   } catch (err) {
-    return res.status(400).send({ error: err.message });
+    next(err);
   }
 });
 
-router.patch('/updateBalance', async (req, res) => {
+router.patch('/updateBalance', async (req, res, next) => {
   try {
     const { id, balance } = req.body;
 
@@ -114,17 +121,31 @@ router.patch('/updateBalance', async (req, res) => {
     );
 
     if (accountIndex < 0) {
-      return res.status(400).send({ error: 'ID not found.' });
+      throw { message: 'ID not found.' };
     }
 
     data.accounts[accountIndex].balance = balance;
 
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
+    logger.info(`${req.method} ${req.baseUrl}${req.url} ID ${id} updated.`);
+
     return res.send(data.accounts[accountIndex]);
   } catch (err) {
-    return res.status(400).send({ error: err.message });
+    next(err);
   }
+});
+
+// errors
+router.use((err, req, res, _next) => {
+  logger.error(`${req.method} ${req.baseUrl}${req.url}: ${err.message}`);
+
+  const serverErrNos = [-2, -13];
+
+  if (serverErrNos.some((item) => item === err.errno)) {
+    return res.status(500).send({ error: err.message });
+  }
+  return res.status(400).send({ error: err.message });
 });
 
 export default router;
