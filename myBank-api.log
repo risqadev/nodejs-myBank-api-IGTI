@@ -1,23 +1,19 @@
-2020-08-08T00:20:35.186Z [myBank-api] info: 'accounts.json' file created.
-2020-08-08T00:20:35.188Z [myBank-api] info: API started!
-2020-08-08T00:20:50.722Z [myBank-api] info: POST /account: created account with id 1
-2020-08-08T00:20:52.450Z [myBank-api] info: POST /account: created account with id 2
-2020-08-08T00:20:54.832Z [myBank-api] info: POST /account: created account with id 3
-2020-08-08T00:20:55.366Z [myBank-api] info: POST /account: created account with id 4
-2020-08-08T00:20:55.698Z [myBank-api] info: POST /account: created account with id 5
-2020-08-08T00:20:56.113Z [myBank-api] info: POST /account: created account with id 6
-2020-08-08T00:20:56.373Z [myBank-api] info: POST /account: created account with id 7
-2020-08-08T00:21:02.046Z [myBank-api] info: GET /account success.
-2020-08-08T00:21:06.740Z [myBank-api] info: GET /account/5 success.
-2020-08-08T00:21:11.031Z [myBank-api] info: GET /account/3 success.
-2020-08-08T00:21:17.695Z [myBank-api] info: DELETE /account/5 success.
-2020-08-08T00:21:41.519Z [myBank-api] error: GET /account/5: ID not found.
-2020-08-08T00:21:53.256Z [myBank-api] info: DELETE /account/2 success.
-2020-08-08T00:22:00.470Z [myBank-api] error: GET /account/2: ID not found.
-2020-08-08T00:22:02.896Z [myBank-api] info: GET /account success.
-2020-08-08T00:23:54.110Z [myBank-api] info: 'accounts.json' file loaded.
-2020-08-08T00:23:54.112Z [myBank-api] info: API started!
-2020-08-08T00:24:34.033Z [myBank-api] info: PUT /account/ ID 4 updated.
-2020-08-08T00:25:54.023Z [myBank-api] info: GET /account success.
-2020-08-08T00:26:07.277Z [myBank-api] info: PATCH /account/updateBalance ID 6 updated.
-2020-08-08T00:26:32.220Z [myBank-api] info: POST /account: created account with id 8
+2020-08-08T17:13:15.291Z [myBank-api] info: 'accounts.json' file created.
+2020-08-08T17:13:15.293Z [myBank-api] info: API started!
+2020-08-08T17:13:38.464Z [myBank-api] info: GET /account success.
+2020-08-08T17:14:11.991Z [myBank-api] info: POST /account: created account with id 1
+2020-08-08T17:14:20.216Z [myBank-api] error: POST /account/: The 'name' and 'balance' values are required.
+2020-08-08T17:14:52.143Z [myBank-api] info: GET /account/1 success.
+2020-08-08T17:15:03.369Z [myBank-api] error: GET /account/2: ID not found.
+2020-08-08T17:15:48.214Z [myBank-api] info: POST /account: created account with id 2
+2020-08-08T17:16:08.628Z [myBank-api] info: DELETE /account/1 success.
+2020-08-08T17:16:21.738Z [myBank-api] error: DELETE /account/1: ID not found.
+2020-08-08T17:16:31.898Z [myBank-api] error: DELETE /account/0: The 'id' value is not valid.
+2020-08-08T17:17:54.575Z [myBank-api] info: PUT /account/ ID 2 updated.
+2020-08-08T17:18:00.186Z [myBank-api] error: PUT /account/: The 'id' value is not valid.
+2020-08-08T17:18:04.586Z [myBank-api] error: PUT /account/: The 'name' and 'balance' values are required.
+2020-08-08T17:19:17.808Z [myBank-api] error: PUT /account/: ID not found.
+2020-08-08T17:21:13.554Z [myBank-api] info: PATCH /account/updateBalance ID 2 updated.
+2020-08-08T17:24:10.017Z [myBank-api] error: PATCH /account/updateBalance: The 'id' value is not valid.
+2020-08-08T17:24:16.076Z [myBank-api] error: PATCH /account/updateBalance: ID not found.
+2020-08-08T17:24:25.427Z [myBank-api] error: PATCH /account/updateBalance: The 'balance' value is required.

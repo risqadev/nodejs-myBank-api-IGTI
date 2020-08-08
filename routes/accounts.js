@@ -10,6 +10,10 @@ router.post('/', async (req, res, next) => {
     name = String(name).trim();
     balance = Number(balance);
 
+    if (!name || name === 'undefined' || (!balance && balance !== 0)) {
+      throw new Error(`The 'name' and 'balance' values are required.`);
+    }
+
     const data = JSON.parse(await readFile(global.fileName));
 
     const account = { id: data.nextId++, name, balance };
@@ -42,13 +46,19 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    const { id } = req.params;
+    let { id } = req.params;
+    id = Number(id);
+
+    if (id < 1) {
+      throw new Error(`The 'id' value is not valid.`);
+    }
+
     const { accounts } = JSON.parse(await readFile(global.fileName));
 
-    const account = accounts.find((account) => account.id.toString() === id);
+    const account = accounts.find((account) => account.id === id);
 
     if (!account) {
-      throw { message: 'ID not found.' };
+      throw new Error('ID not found.');
     }
 
     logger.info(`${req.method} ${req.baseUrl}${req.url} success.`);
@@ -61,15 +71,21 @@ router.get('/:id', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   try {
-    const { id } = req.params;
+    let { id } = req.params;
+    id = Number(id);
+
+    if (id < 1) {
+      throw new Error(`The 'id' value is not valid.`);
+    }
+
     const data = JSON.parse(await readFile(global.fileName));
 
     const accountIndex = data.accounts.findIndex(
-      (account) => account.id.toString() === id
+      (account) => account.id === id
     );
 
     if (accountIndex < 0) {
-      throw { message: 'ID not found.' };
+      throw new Error('ID not found.');
     }
 
     data.accounts.splice(accountIndex, 1);
@@ -86,16 +102,26 @@ router.delete('/:id', async (req, res, next) => {
 
 router.put('/', async (req, res, next) => {
   try {
-    const { id, name, balance } = req.body;
+    let { id, name, balance } = req.body;
+    id = Number(id);
+    name = String(name).trim();
+    balance = Number(balance);
+
+    if (id < 1 || !id) {
+      throw new Error(`The 'id' value is not valid.`);
+    }
+    if (!name || name === 'undefined' || (!balance && balance !== 0)) {
+      throw new Error(`The 'name' and 'balance' values are required.`);
+    }
 
     const data = JSON.parse(await readFile(global.fileName));
 
     const accountIndex = data.accounts.findIndex(
-      (account) => account.id.toString() === id.toString()
+      (account) => account.id === id
     );
 
     if (accountIndex < 0) {
-      throw { message: 'ID not found.' };
+      throw new Error('ID not found.');
     }
 
     data.accounts[accountIndex] = { id, name, balance };
@@ -112,16 +138,25 @@ router.put('/', async (req, res, next) => {
 
 router.patch('/updateBalance', async (req, res, next) => {
   try {
-    const { id, balance } = req.body;
+    let { id, balance } = req.body;
+    id = Number(id);
+    balance = Number(balance);
+
+    if (id < 1 || !id) {
+      throw new Error(`The 'id' value is not valid.`);
+    }
+    if (!balance && balance !== 0) {
+      throw new Error(`The 'balance' value is required.`);
+    }
 
     const data = JSON.parse(await readFile(global.fileName));
 
     const accountIndex = data.accounts.findIndex(
-      (account) => account.id.toString() === id.toString()
+      (account) => account.id === id
     );
 
     if (accountIndex < 0) {
-      throw { message: 'ID not found.' };
+      throw new Error('ID not found.');
     }
 
     data.accounts[accountIndex].balance = balance;

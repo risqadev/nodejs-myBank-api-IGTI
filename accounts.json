@@ -1,35 +1,10 @@
 {
-  "nextId": 9,
+  "nextId": 3,
   "accounts": [
     {
-      "id": 1,
-      "name": "Raimunberto Carvando",
-      "balance": -364.7
-    },
-    {
-      "id": 3,
-      "name": "Raimunberto Carvando",
-      "balance": -364.7
-    },
-    {
-      "id": 4,
+      "id": 2,
       "name": "Cardisnei Vilpércio",
-      "balance": 1050
-    },
-    {
-      "id": 6,
-      "name": "Raimunberto Carvando",
       "balance": 0
-    },
-    {
-      "id": 7,
-      "name": "Raimunberto Carvando",
-      "balance": -364.7
-    },
-    {
-      "id": 8,
-      "name": "Raimunberto Carvando",
-      "balance": -364.7
     }
   ]
 }
